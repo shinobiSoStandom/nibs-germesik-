@@ -8,7 +8,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private(set) var islandController: IslandWindowController?
     private var demoMenuItem: NSMenuItem?
     #if !APPSTORE
-    /// "Update Coucou to 0.6.0…", shown only when a new version is out.
+    /// "Update NIBS Гермесик to 0.6.0…", shown only when a new version is out.
     private var updateMenuItem: NSMenuItem?
     private var updateMenuSeparator: NSMenuItem?
     /// The menu bar Mochi turns blue while a new version waits (MacUpdater.hintActive).
@@ -28,6 +28,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Ignore SIGPIPE — prevents crash when nb-hook closes socket before we write response
         signal(SIGPIPE, SIG_IGN)
+        // A self-contained preview of the real native notch, without service connections.
+        if CommandLine.arguments.contains("--nibs-preview") {
+            NSApp.setActivationPolicy(.accessory)
+            setupMenuBarItem()
+            setupIsland(preview: true)
+            DemoEngine.shared.start()
+            return
+        }
         #if !APPSTORE
         // Before anything writes its settings: did Coucou just update itself? (What's new, once.)
         WhatsNewCenter.shared.noteLaunch()
@@ -88,7 +96,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         add(NoteTaker.shared.isRecording ? String(localized: "notes.stop") : String(localized: "hub.record-call"),
             #selector(toggleCallRecording))
         menu.addItem(.separator())
-        add(String(localized: "Open Coucou"), #selector(openIsland))
+        add(String(localized: "Open NIBS Гермесик"), #selector(openIsland))
         add(NSLocalizedString("Settings…", comment: ""), #selector(openSettings))
         return menu
     }
@@ -113,9 +121,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func setupMenuBarItem() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         guard let button = statusItem?.button else { return }
-        button.image = NSImage(named: "MenuBarIcon") ?? NSImage(systemSymbolName: "circle.fill", accessibilityDescription: "Coucou")
+        button.image = NSImage(named: "MenuBarIcon") ?? NSImage(systemSymbolName: "circle.fill", accessibilityDescription: "NIBS Гермесик")
         button.image?.size = NSSize(width: 24, height: 18)
-        button.image?.accessibilityDescription = "Coucou"
+        button.image?.accessibilityDescription = "NIBS Гермесик"
         button.image?.isTemplate = true
 
         let menu = NSMenu()
@@ -136,7 +144,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         demoMenuItem = demoItem
         menu.addItem(demoItem)
         menu.addItem(.separator())
-        menu.addItem(withTitle: NSLocalizedString("Open Coucou", comment: ""), action: #selector(openIsland), keyEquivalent: "")
+        menu.addItem(withTitle: NSLocalizedString("Open NIBS Гермесик", comment: ""), action: #selector(openIsland), keyEquivalent: "")
         menu.addItem(.separator())
         menu.addItem(withTitle: NSLocalizedString("Weekly recap", comment: ""), action: #selector(openWeeklyRecap), keyEquivalent: "")
         #if !APPSTORE
@@ -168,10 +176,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
               let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: Int(size.width * 2), pixelsHigh: Int(size.height * 2),
                                          bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false,
                                          colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0) else {
-            let icon = NSImage(named: "MenuBarIcon") ?? NSImage(systemSymbolName: "circle.fill", accessibilityDescription: "Coucou")
+            let icon = NSImage(named: "MenuBarIcon") ?? NSImage(systemSymbolName: "circle.fill", accessibilityDescription: "NIBS Гермесик")
             icon?.size = size
             icon?.isTemplate = true
-            icon?.accessibilityDescription = "Coucou"
+            icon?.accessibilityDescription = "NIBS Гермесик"
             button.image = icon
             return
         }
@@ -186,7 +194,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let blue = NSImage(size: size)
         blue.addRepresentation(rep)
         blue.isTemplate = false
-        blue.accessibilityDescription = "Coucou"
+        blue.accessibilityDescription = "NIBS Гермесик"
         button.image = blue
     }
     #endif
@@ -329,10 +337,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: - Island setup
 
-    private func setupIsland() {
+    private func setupIsland(preview: Bool = false) {
         islandController = IslandWindowController()
         islandController?.showWindow(nil)
         islandController?.fsm.launch()
+        guard !preview else { return }
         HookServer.shared.start()
         #if !APPSTORE
         _ = VoiceEngine.shared  // registers system observers; starts mic only if the user enabled voice

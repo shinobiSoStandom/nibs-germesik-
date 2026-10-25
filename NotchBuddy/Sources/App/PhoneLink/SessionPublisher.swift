@@ -211,7 +211,7 @@ struct SessionSnapshot: Equatable {
 
     /// Same zone as CloudProbe.zoneID, rebuilt here because that one is main-actor isolated.
     static var zoneID: CKRecordZone.ID {
-        CKRecordZone.ID(zoneName: "Coucou", ownerName: CKCurrentUserDefaultName)
+        CKRecordZone.ID(zoneName: "NIBS Гермесик", ownerName: CKCurrentUserDefaultName)
     }
 
     static func recordID(for pillId: String) -> CKRecord.ID {

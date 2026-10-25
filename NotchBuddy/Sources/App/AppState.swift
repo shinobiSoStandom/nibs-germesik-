@@ -279,7 +279,7 @@ final class AppState: ObservableObject {
 
     // Selected app language ("" = System, else BCP-47 code e.g. "fr")
     @Published var appLanguage: String = {
-        let bundleId = Bundle.main.bundleIdentifier ?? "fr.louisraille.NotchBuddy"
+        let bundleId = Bundle.main.bundleIdentifier ?? "com.nibs.germesik"
         let langs = UserDefaults.standard.persistentDomain(forName: bundleId)?["AppleLanguages"] as? [String]
         return langs?.first ?? ""
     }()
@@ -460,7 +460,7 @@ final class AppState: ObservableObject {
 
     // Voice command result (shown in VoiceResultView for ~2 s, then cleared by IWC)
     @Published var voiceResult: VoiceActionResult? = nil
-    /// True from "OK Coucou" until Coucou has finished answering (island stays compact).
+    /// True from "OK NIBS Гермесик" until Coucou has finished answering (island stays compact).
     /// Drives Mochi's single attentive pose for the whole exchange.
     @Published var voiceActive = false
     /// Listening / thinking / speaking — drives per-frame Mochi animations.

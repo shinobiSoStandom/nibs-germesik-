@@ -90,8 +90,8 @@ struct LockScreenWidget: Widget {
         StaticConfiguration(kind: "CoucouLock", provider: SessionsProvider()) { entry in
             LockScreenView(sessions: entry.sessions)
         }
-        .configurationDisplayName("Coucou")
-        .description("Mochi on your Lock Screen.")
+        .configurationDisplayName("NIBS Гермесик")
+        .description("Гермесик on your Lock Screen.")
         .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryInline])
     }
 }
@@ -371,7 +371,7 @@ struct LockScreenView: View {
             .widgetURL(sessions.first.map { SharedSession.url(for: $0.id) })
             .containerBackground(for: .widget) { Color.clear }
         default:
-            Text(sessions.summary.map { "Coucou · \($0)" } ?? "Coucou · all quiet")
+            Text(sessions.summary.map { "NIBS Гермесик · \($0)" } ?? "NIBS Гермесик · all quiet")
                 .containerBackground(for: .widget) { Color.clear }
         }
     }

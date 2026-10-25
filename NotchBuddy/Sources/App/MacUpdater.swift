@@ -111,14 +111,7 @@ final class MacUpdater: ObservableObject {
 
     /// At launch: a first look 30 s in, then every hour (a GitHub call only every 6 h).
     func start() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 30) { [weak self] in self?.tick(launch: true) }
-        timer?.invalidate()
-        let t = Timer(timeInterval: 3600, repeats: true) { _ in
-            Task { @MainActor in MacUpdater.shared.tick() }
-        }
-        t.tolerance = 300
-        RunLoop.main.add(t, forMode: .common)
-        timer = t
+        // No automatic update service until a signed NIBS release exists.
     }
 
     private func tick(launch: Bool = false) {
@@ -166,31 +159,8 @@ final class MacUpdater: ObservableObject {
     // MARK: - Check
 
     func check(manual: Bool) async {
-        guard !busy, lastCheck != .checking else { return }
-        lastCheck = .checking
-        var req = URLRequest(url: MacUpdate.releasesURL)
-        req.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
-        do {
-            let (data, response) = try await session.data(for: req)
-            lastCheckDate = Date()
-            guard (response as? HTTPURLResponse)?.statusCode == 200 else { lastCheck = .unreachable; return }
-            guard let release = MacUpdate.latest(data), MacUpdate.isNewer(release.version, than: Self.currentVersion) else {
-                latest = nil
-                lastCheck = .upToDate
-                if case .available = phase { phase = .idle }
-                return
-            }
-            latest = release
-            lastCheck = .none
-            appendAppLog("nb.log", "[Update] \(release.version) is out (running \(Self.currentVersion))")
-            if manual {
-                show(release)
-            } else {
-                announceIfFree()
-            }
-        } catch {
-            lastCheck = .unreachable
-        }
+        lastCheck = .unreachable
+        latest = nil
     }
 
     /// Mochi says it once a day at most for a version, until it is installed; in between, the

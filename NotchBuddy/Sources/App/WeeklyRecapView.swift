@@ -224,7 +224,7 @@ struct RecapShareImageView: View {
                 .frame(width: 200, height: 200)
                 .padding(.bottom, 20)
 
-                Text("Coucou")
+                Text("NIBS Гермесик")
                     .font(.system(size: 52, weight: .black, design: .rounded))
                     .foregroundColor(Color(hex: "#F1F2F4"))
                 Text(String(localized: "recap.title"))
@@ -302,7 +302,7 @@ struct RecapShareImageView: View {
 
                 Spacer()
 
-                Text("Coucou · github.com/Louis-CFM/coucou")
+                Text("NIBS Гермесик · github.com/shinobiSoStandom/nibs-germesik-")
                     .font(.system(size: 20, weight: .medium, design: .monospaced))
                     .foregroundColor(Color(hex: "#8E939C").opacity(0.6))
                     .padding(.bottom, 60)

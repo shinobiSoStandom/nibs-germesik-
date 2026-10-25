@@ -76,7 +76,7 @@ final class PhoneLink {
     }
 
     static let containerID = "iCloud.fr.louisraille.Coucou"
-    static let zoneID = CKRecordZone.ID(zoneName: "Coucou", ownerName: CKCurrentUserDefaultName)
+    static let zoneID = CKRecordZone.ID(zoneName: "NIBS Гермесик", ownerName: CKCurrentUserDefaultName)
     private static let subscriptionID = "coucou-zone-phone-silent"
     /// Step 1's subscription showed a "Ping from your Mac" banner. A saved
     /// subscription keeps its notification settings, so it is deleted rather than reused.
@@ -176,7 +176,7 @@ final class PhoneLink {
                                             options: [.firesOnRecordCreation])
         approvals.zoneID = Self.zoneID
         let alert = CKSubscription.NotificationInfo()
-        alert.title = "Coucou"
+        alert.title = "NIBS Гермесик"
         alert.alertBody = "An agent is waiting for your OK"
         alert.soundName = mochi ? "approval.wav" : "default"
         alert.category = NotificationActions.approvalCategory

@@ -19,7 +19,7 @@ enum MochiChoice: String, AppEnum {
     case n8n = "integration_n8n"
     case notion = "integration_notion"
 
-    static let typeDisplayRepresentation: TypeDisplayRepresentation = "Mochi"
+    static let typeDisplayRepresentation: TypeDisplayRepresentation = "Гермесик"
 
     static let caseDisplayRepresentations: [MochiChoice: DisplayRepresentation] = [
         .automatic: "Automatic",
@@ -43,7 +43,7 @@ enum MochiChoice: String, AppEnum {
 
 struct TeamConfiguration: WidgetConfigurationIntent {
     static let title: LocalizedStringResource = "Team"
-    static let description = IntentDescription("Pick the Mochi in each spot.")
+    static let description = IntentDescription("Pick the Гермесик in each spot.")
 
     @Parameter(title: "Top left", default: .automatic) var spot1: MochiChoice
     @Parameter(title: "Top right", default: .automatic) var spot2: MochiChoice

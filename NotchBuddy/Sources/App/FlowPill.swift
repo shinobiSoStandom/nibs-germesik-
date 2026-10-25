@@ -22,7 +22,7 @@ struct FlowAnnouncement: Equatable, Identifiable {
     /// An SF Symbol.
     var symbol: String
     /// Its colour.
-    var tint: String = "#FB923C"
+    var tint: String = "#ED257C"
     var text: String
     /// The button's title, if there is something to do.
     var action: String?
@@ -245,7 +245,7 @@ struct FlowPillView: View {
             Capsule()
                 .strokeBorder(Color.white.opacity(open ? 0.16 : 0.42), lineWidth: open ? 1 : 1.2)
             Capsule()
-                .strokeBorder(Color(hex: "#F97316").opacity(look == .handsFree ? 0.85 : 0), lineWidth: 1.5)
+                .strokeBorder(Color(hex: "#ED257C").opacity(look == .handsFree ? 0.85 : 0), lineWidth: 1.5)
             content
                 .opacity(open ? 1 : 0)
                 .scaleEffect(open ? 1 : 0.5)

@@ -1125,192 +1125,21 @@ final class BotEngine: ObservableObject {
     // MARK: - Draw
 
     func draw(context: GraphicsContext, size: CGSize) {
-        let W = size.width
-        let H = size.height
-        let R = W * 0.3
-        let rx = R * 1.14
-        let ry = R * 0.88
-
-        let cx = W / 2 + ox * R
-        // particleOverhang shifts the bot body down in canvas coords so hearts can fly into
-        // the extended canvas above without clipping (BotPlacement compensates with position offset)
-        let cy = H / 2 + particleOverhang / 2 + oy * R + R * 0.06
-
-        var ctx = context
-        ctx.translateBy(x: cx, y: cy)
-        if tilt != 0 { ctx.rotate(by: .radians(tilt)) }
-        ctx.scaleBy(x: sx, y: sy)
-
-        // Body path (superellipse for Mochi, morph to rect for upload)
-        let bodyPath = mochiPath(rx: rx, ry: ry, morph: morph, R: R)
-
-        // Body fill
-        drawBody(ctx: &ctx, path: bodyPath, R: R, rx: rx, ry: ry,
-                 pumpkinColors: outfit == .pumpkin && !isMini)
-
-        // A warm Mac flushes him (MochiMood.swift).
-        drawMoodTint(ctx: &ctx, path: bodyPath, rx: rx, ry: ry)
-
-        // Blush — always shows a floor proportional to tint (prototype behaviour)
-        let blushVal = max(blush, tint * 0.5, moodHot * 0.85) * (1 - morph)
-        if blushVal > 0.01 {
-            drawBlush(ctx: &ctx, path: bodyPath, rx: rx, ry: ry, R: R, blush: blushVal)
-        }
-
-        // Eyes
-        drawEyes(ctx: &ctx, path: bodyPath, R: R, rx: rx, ry: ry)
-
-        // Mouth hole — dark pill cutout inside the box face
-        // Spec: left/right margins 0.10R, top margin 0.08R from box top (-0.94R)
-        if morph > 0.05 {
-            let hW = R * 1.80 * morph   // hole width = box width (2×1.0R) − 2×0.10R margin
-            let hH = slotH * R * morph  // hole height (spring-animated, scaled by morph)
-            let hX = -hW / 2
-            // Hole Y: box top is -R*0.94 at morph=1, lerped from -R*0.88 at morph=0
-            let boxTop = -R * (0.88 + 0.06 * morph)
-            let hY = boxTop + R * 0.08 * morph  // top margin scales with morph
-
-            var boxCtx = ctx
-            boxCtx.clip(to: bodyPath)  // everything clipped inside body
-
-            // Top rim — 1pt white 55% line at box top edge
-            var rim = Path()
-            rim.move(to: CGPoint(x: -R * 0.90 * morph, y: boxTop + 1))
-            rim.addLine(to: CGPoint(x: R * 0.90 * morph, y: boxTop + 1))
-            boxCtx.stroke(rim, with: .color(Color.white.opacity(0.55 * Double(morph))),
-                          style: StrokeStyle(lineWidth: 1, lineCap: .round))
-
-            // Hole interior — only draw if visibly open
-            if hH > 0.8 {
-                let hR = min(hW / 2, hH / 2)  // fully rounded when hH < hW (pill shape)
-                var hole = Path()
-                hole.addRoundedRect(in: CGRect(x: hX, y: hY, width: hW, height: hH),
-                                    cornerSize: CGSize(width: hR, height: hR))
-                boxCtx.fill(hole, with: .linearGradient(
-                    Gradient(colors: [Color(red: 0.027, green: 0.031, blue: 0.039),
-                                      Color(red: 0.063, green: 0.075, blue: 0.102)]),
-                    startPoint: CGPoint(x: 0, y: hY),
-                    endPoint: CGPoint(x: 0, y: hY + hH)
-                ))
-                // Bottom lip — 1pt white 28% highlight
-                if hH > 4 {
-                    let lipR = min(hR, (hW - 2) / 2)
-                    var lip = Path()
-                    lip.move(to: CGPoint(x: hX + lipR, y: hY + hH - 0.5))
-                    lip.addLine(to: CGPoint(x: hX + hW - lipR, y: hY + hH - 0.5))
-                    boxCtx.stroke(lip, with: .color(Color.white.opacity(0.28 * Double(morph))),
-                                  style: StrokeStyle(lineWidth: 1, lineCap: .round))
-                }
-            }
-        }
-
-        // Reset transform for hands, badge, particles which need world coords
-        // (We'll pass world-space cx/cy to these helpers)
+        // Original NIBS artwork replaces the upstream squircle character.
+        let side = min(size.width * 0.92, size.height * 0.94)
+        let center = CGPoint(x: size.width / 2, y: size.height / 2 + particleOverhang / 2)
+        var art = context
+        art.translateBy(x: center.x + ox * side * 0.3, y: center.y + oy * side * 0.3)
+        art.rotate(by: .radians(tilt + (outfit == .none ? roll : 0)))
+        art.scaleBy(x: max(0.75, min(1.1, sx)), y: max(0.75, min(1.1, sy)))
+        art.draw(art.resolve(Image("Hermesik")),
+                 in: CGRect(x: -side / 2, y: -side / 2, width: side, height: side))
     }
 
     // MARK: - Draw hands behind body (called before draw() so hands appear under Mochi)
 
     func drawHandsBehind(context: GraphicsContext, size: CGSize) {
-        guard hands > 0.01, !isMini else { return }
-        let W = size.width, H = size.height
-        let R = W * 0.3
-        // Only draw hands when Mochi is large enough to be meaningful (not compact/peek)
-        guard R > 14 else { return }
-        let rx = R * 1.14
-        let ry = R * 0.88
-        let cx = W / 2 + ox * R
-        let cy = H / 2 + particleOverhang / 2 + oy * R + R * 0.06
-
-        let now = CACurrentMediaTime()
-        let bodyH = 2 * ry   // full body height
-
-        // Hand ellipse half-dims: 0.30×bodyH wide, 0.26×bodyH tall (scaled by hands 0→1)
-        let hew = 0.30 * ry * hands   // half-width
-        let heh = 0.26 * ry * hands   // half-height
-
-        // Body half-dims with current squash scale
-        let hwB = rx * sx
-        let hhB = ry * sy
-
-        let isWaving = now >= waveStart && waveStart > 0 && now < waveUntil
-
-        for sd in [-1.0, 1.0] {
-            var localX: CGFloat
-            var localY: CGFloat
-            var handRot: CGFloat = 0
-
-            if sd > 0 && isWaving {
-                // Right hand: rise to wave position over first 180ms, then oscillate
-                let wt = CGFloat(now - waveStart)
-                let rise = min(1.0, wt / 0.18)
-                let riseEased: CGFloat = 1 - pow(1 - rise, 3)   // easeOut cubic
-
-                // Rest position is lower-side; wave position is upper-side (at eye height)
-                let restX: CGFloat = hwB * 1.08
-                let restY: CGFloat = hhB * 0.70
-                let oscX = cos(13 * wt) * 0.06 * bodyH
-                let oscY = -sin(13 * wt) * 0.14 * bodyH
-                let waveX: CGFloat = hwB * 1.10 + oscX
-                let waveY: CGFloat = -hhB * 0.15 + oscY
-                localX = restX + (waveX - restX) * riseEased
-                localY = restY + (waveY - restY) * riseEased
-                handRot = (-0.5 + sin(13 * wt) * 0.35) * riseEased
-
-            } else if sd < 0 && isWaving {
-                // Left hand: gentle sway at rest position
-                let wt = CGFloat(now - waveStart)
-                localX = -hwB * 1.08
-                localY = hhB * 0.70 + sin(6 * wt) * 0.04 * bodyH
-
-            } else if sd > 0 && listenHandRaise > 0.01 {
-                // Right hand: raised to attentive listening position (not waving)
-                let h = listenHandRaise
-                localX = lerp(hwB * 1.08, hwB * 1.05, h)
-                localY = lerp(hhB * 0.70, -hhB * 0.28, h)
-                handRot = -0.45 * h   // tilts slightly toward head
-
-            } else {
-                // Rest: lower-side, clearly peeking behind body bottom
-                localX = CGFloat(sd) * hwB * 1.08
-                localY = hhB * 0.70
-            }
-
-            // Apply body tilt to get world position
-            let cosT = cos(tilt), sinT = sin(tilt)
-            let worldX = cx + cosT * localX - sinT * localY
-            let worldY = cy + sinT * localX + cosT * localY
-
-            // Draw
-            var handCtx = context
-            handCtx.translateBy(x: worldX, y: worldY)
-            if handRot != 0 { handCtx.rotate(by: .radians(handRot)) }
-
-            let handRect = CGRect(x: -hew, y: -heh, width: hew * 2, height: heh * 2)
-            var handPath = Path()
-            handPath.addEllipse(in: handRect)
-
-            // Fill with body material (same gradient as body)
-            if let bc = bodyColor {
-                let c0 = mix3(cgColorToTuple(bc), (1, 1, 1), 0.35)
-                let c1 = cgColorToTuple(bc)
-                handCtx.fill(handPath, with: .linearGradient(
-                    Gradient(colors: [colorFromTuple(c0), colorFromTuple(c1)]),
-                    startPoint: CGPoint(x: hew * 0.7, y: -heh * 0.85),
-                    endPoint: CGPoint(x: -hew * 0.8, y: heh * 0.9)
-                ))
-            } else {
-                let c0 = cgColorToTuple(MochiConst.baseTop)
-                let c1 = cgColorToTuple(MochiConst.baseBottom)
-                handCtx.fill(handPath, with: .linearGradient(
-                    Gradient(colors: [colorFromTuple(c0), colorFromTuple(c1)]),
-                    startPoint: CGPoint(x: hew * 0.7, y: -heh * 0.85),
-                    endPoint: CGPoint(x: -hew * 0.8, y: heh * 0.9)
-                ))
-            }
-
-            // Subtle separation border — rgba(0,0,0,0.08) 1pt
-            handCtx.stroke(handPath, with: .color(Color.black.opacity(0.08)), lineWidth: 1)
-        }
+        // Гермесик uses his own silhouette and clothing, included in the artwork.
     }
 
     func drawHandsAndExtras(context: GraphicsContext, size: CGSize) {
@@ -1335,31 +1164,11 @@ final class BotEngine: ObservableObject {
     }
 
     func drawOutfitBehind(context: GraphicsContext, size: CGSize) {
-        guard outfit != .none, !isMini else { return }
-        let W = size.width, H = size.height, R = W * 0.3
-        let cx = W / 2 + ox * R
-        let cy = H / 2 + particleOverhang / 2 + oy * R + R * 0.06
-        // Rigid roll: accessories see roll=0 (they rotate with the body via context transform)
-        let outfitRoll: CGFloat = outfitPresence > 0.05 ? 0 : roll
-        let mH = MochiH(R: R, yaw: yaw, pitch: pitch, physDx: physDx, physDy: physDy, roll: outfitRoll)
-        drawOutfitBehindStatic(context: context, outfit: outfit, H: mH,
-                               cx: cx, cy: cy, tilt: tilt, sx: sx, sy: sy,
-                               roll: outfitRoll, morph: morph, isMini: isMini,
-                               presence: outfitPresence, rollTurns: rollTurns)
+        // Гермесик uses his own silhouette and clothing, included in the artwork.
     }
 
     func drawOutfitFront(context: GraphicsContext, size: CGSize) {
-        guard outfit != .none, !isMini else { return }
-        let W = size.width, H = size.height, R = W * 0.3
-        let cx = W / 2 + ox * R
-        let cy = H / 2 + particleOverhang / 2 + oy * R + R * 0.06
-        // Rigid roll: accessories see roll=0 (they rotate with the body via context transform)
-        let outfitRoll: CGFloat = outfitPresence > 0.05 ? 0 : roll
-        let mH = MochiH(R: R, yaw: yaw, pitch: pitch, physDx: physDx, physDy: physDy, roll: outfitRoll)
-        drawOutfitFrontStatic(context: context, outfit: outfit, H: mH,
-                              cx: cx, cy: cy, tilt: tilt, sx: sx, sy: sy,
-                              roll: outfitRoll, morph: morph, isMini: isMini,
-                              presence: outfitPresence, rollTurns: rollTurns)
+        // Гермесик uses his own silhouette and clothing, included in the artwork.
     }
 
     /// World-space center of Mochi's body (used by BotCanvasView for rigid-roll transform)

@@ -14,7 +14,7 @@ final class HookServer: @unchecked Sendable {
     // Support directory paths
     static var supportDir: URL {
         FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("NotchBuddy")
+            .appendingPathComponent("NIBSGermesik")
     }
     static var socketPath: String {
         #if APPSTORE
@@ -1569,7 +1569,7 @@ final class HookServer: @unchecked Sendable {
             try? clCheck.run()
             clCheck.waitUntilExit()
             if clCheck.terminationStatus != 0 {
-                throw NSError(domain: "Coucou", code: 1,
+                throw NSError(domain: "NIBS Гермесик", code: 1,
                               userInfo: [NSLocalizedDescriptionKey:
                                   "Command Line Tools are required but not installed. Run: xcode-select --install"])
             }
@@ -1821,7 +1821,7 @@ final class HookServer: @unchecked Sendable {
         let url = Self.geminiSettingsURL
         let current = (try? Data(contentsOf: url)) ?? Data()
         guard sha256Hex(current) == fp else {
-            throw NSError(domain: "Coucou", code: 1, userInfo: [
+            throw NSError(domain: "NIBS Гермесик", code: 1, userInfo: [
                 NSLocalizedDescriptionKey: "~/.gemini/settings.json changed since preview. Refresh and try again."
             ])
         }
@@ -1834,8 +1834,8 @@ final class HookServer: @unchecked Sendable {
         var settings = try Self.strictReadJSONObject(at: Self.geminiSettingsURL,
                                                      label: "~/.gemini/settings.json")
         if let raw = settings["hooks"], !(raw is [String: Any]) {
-            throw NSError(domain: "Coucou", code: 2, userInfo: [
-                NSLocalizedDescriptionKey: "~/.gemini/settings.json: \"hooks\" has an unexpected type — Coucou has not touched it."
+            throw NSError(domain: "NIBS Гермесик", code: 2, userInfo: [
+                NSLocalizedDescriptionKey: "~/.gemini/settings.json: \"hooks\" has an unexpected type — NIBS Гермесик has not touched it."
             ])
         }
         let base = hookBase()
@@ -1851,8 +1851,8 @@ final class HookServer: @unchecked Sendable {
         var hooks = settings["hooks"] as? [String: Any] ?? [:]
         for (geminiEvent, normalizedEvent, timeout) in events {
             if let raw = hooks[geminiEvent], !(raw is [[String: Any]]) {
-                throw NSError(domain: "Coucou", code: 2, userInfo: [
-                    NSLocalizedDescriptionKey: "~/.gemini/settings.json: \"hooks\"[\"\(geminiEvent)\"] has an unexpected type — Coucou has not touched it."
+                throw NSError(domain: "NIBS Гермесик", code: 2, userInfo: [
+                    NSLocalizedDescriptionKey: "~/.gemini/settings.json: \"hooks\"[\"\(geminiEvent)\"] has an unexpected type — NIBS Гермесик has not touched it."
                 ])
             }
             var groups = hooks[geminiEvent] as? [[String: Any]] ?? []
@@ -1875,8 +1875,8 @@ final class HookServer: @unchecked Sendable {
         var settings = try Self.strictReadJSONObject(at: Self.geminiSettingsURL,
                                                      label: "~/.gemini/settings.json")
         if let raw = settings["hooks"], !(raw is [String: Any]) {
-            throw NSError(domain: "Coucou", code: 2, userInfo: [
-                NSLocalizedDescriptionKey: "~/.gemini/settings.json: \"hooks\" has an unexpected type — Coucou has not touched it."
+            throw NSError(domain: "NIBS Гермесик", code: 2, userInfo: [
+                NSLocalizedDescriptionKey: "~/.gemini/settings.json: \"hooks\" has an unexpected type — NIBS Гермесик has not touched it."
             ])
         }
         if var hooks = settings["hooks"] as? [String: Any] {
@@ -1917,7 +1917,7 @@ final class HookServer: @unchecked Sendable {
         let url = Self.agyHooksURL
         let current = (try? Data(contentsOf: url)) ?? Data()
         guard sha256Hex(current) == fp else {
-            throw NSError(domain: "Coucou", code: 1, userInfo: [
+            throw NSError(domain: "NIBS Гермесик", code: 1, userInfo: [
                 NSLocalizedDescriptionKey: "~/.gemini/config/hooks.json changed since preview. Refresh and try again."
             ])
         }
@@ -1973,13 +1973,13 @@ final class HookServer: @unchecked Sendable {
         let data: Data
         do { data = try Data(contentsOf: url) }
         catch {
-            throw NSError(domain: "Coucou", code: 2, userInfo: [
-                NSLocalizedDescriptionKey: "\(label) cannot be read — Coucou has not touched it."
+            throw NSError(domain: "NIBS Гермесик", code: 2, userInfo: [
+                NSLocalizedDescriptionKey: "\(label) cannot be read — NIBS Гермесик has not touched it."
             ])
         }
         guard let obj = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] else {
-            throw NSError(domain: "Coucou", code: 2, userInfo: [
-                NSLocalizedDescriptionKey: "\(label) is not valid JSON — Coucou has not touched it."
+            throw NSError(domain: "NIBS Гермесик", code: 2, userInfo: [
+                NSLocalizedDescriptionKey: "\(label) is not valid JSON — NIBS Гермесик has not touched it."
             ])
         }
         return obj
@@ -1996,7 +1996,7 @@ final class HookServer: @unchecked Sendable {
                 .appendingPathComponent("\(suffix).bak-\(fmt.string(from: Date()))")
             do { try fm.copyItem(at: url, to: backupURL) }
             catch {
-                throw NSError(domain: "Coucou", code: 3, userInfo: [
+                throw NSError(domain: "NIBS Гермесик", code: 3, userInfo: [
                     NSLocalizedDescriptionKey: "Could not back up \(url.lastPathComponent): \(error.localizedDescription)"
                 ])
             }
@@ -2072,7 +2072,7 @@ final class HookServer: @unchecked Sendable {
         let url = Self.codexHooksURL
         let current = (try? Data(contentsOf: url)) ?? Data()
         guard sha256Hex(current) == fp else {
-            throw NSError(domain: "Coucou", code: 1, userInfo: [
+            throw NSError(domain: "NIBS Гермесик", code: 1, userInfo: [
                 NSLocalizedDescriptionKey: "~/.codex/hooks.json changed since preview. Refresh and try again."
             ])
         }
@@ -2084,8 +2084,8 @@ final class HookServer: @unchecked Sendable {
     private func buildCodexHooksData() throws -> Data {
         var root = try Self.strictReadJSONObject(at: Self.codexHooksURL, label: "~/.codex/hooks.json")
         if let raw = root["hooks"], !(raw is [String: Any]) {
-            throw NSError(domain: "Coucou", code: 2, userInfo: [
-                NSLocalizedDescriptionKey: "~/.codex/hooks.json: \"hooks\" has an unexpected type — Coucou has not touched it."
+            throw NSError(domain: "NIBS Гермесик", code: 2, userInfo: [
+                NSLocalizedDescriptionKey: "~/.codex/hooks.json: \"hooks\" has an unexpected type — NIBS Гермесик has not touched it."
             ])
         }
         let base = hookBase()
@@ -2095,7 +2095,7 @@ final class HookServer: @unchecked Sendable {
             ("SessionStart",    10,  nil),
             ("UserPromptSubmit", 10, nil),
             ("PreToolUse",      10,  nil),
-            ("PermissionRequest", 120, "Waiting for your answer in the notch (Coucou)"),
+            ("PermissionRequest", 120, "Waiting for your answer in the notch (NIBS Гермесик)"),
             ("PostToolUse",     10,  nil),
             ("Stop",            10,  nil),
             ("SubagentStart",   10,  nil),
@@ -2106,8 +2106,8 @@ final class HookServer: @unchecked Sendable {
         var hooks = root["hooks"] as? [String: Any] ?? [:]
         for (event, timeout, statusMsg) in events {
             if let raw = hooks[event], !(raw is [[String: Any]]) {
-                throw NSError(domain: "Coucou", code: 2, userInfo: [
-                    NSLocalizedDescriptionKey: "~/.codex/hooks.json: \"hooks\"[\"\(event)\"] has an unexpected type — Coucou has not touched it."
+                throw NSError(domain: "NIBS Гермесик", code: 2, userInfo: [
+                    NSLocalizedDescriptionKey: "~/.codex/hooks.json: \"hooks\"[\"\(event)\"] has an unexpected type — NIBS Гермесик has not touched it."
                 ])
             }
             var groups = hooks[event] as? [[String: Any]] ?? []
@@ -2130,8 +2130,8 @@ final class HookServer: @unchecked Sendable {
     private func withoutCodexHooks() throws -> Data {
         var root = try Self.strictReadJSONObject(at: Self.codexHooksURL, label: "~/.codex/hooks.json")
         if let raw = root["hooks"], !(raw is [String: Any]) {
-            throw NSError(domain: "Coucou", code: 2, userInfo: [
-                NSLocalizedDescriptionKey: "~/.codex/hooks.json: \"hooks\" has an unexpected type — Coucou has not touched it."
+            throw NSError(domain: "NIBS Гермесик", code: 2, userInfo: [
+                NSLocalizedDescriptionKey: "~/.codex/hooks.json: \"hooks\" has an unexpected type — NIBS Гермесик has not touched it."
             ])
         }
         if var hooks = root["hooks"] as? [String: Any] {
@@ -2197,7 +2197,7 @@ final class HookServer: @unchecked Sendable {
         let url = Self.copilotHooksURL
         let current = (try? Data(contentsOf: url)) ?? Data()
         guard sha256Hex(current) == fp else {
-            throw NSError(domain: "Coucou", code: 1, userInfo: [
+            throw NSError(domain: "NIBS Гермесик", code: 1, userInfo: [
                 NSLocalizedDescriptionKey: "~/.copilot/hooks/coucou.json changed since preview. Refresh and try again."
             ])
         }
@@ -2215,8 +2215,8 @@ final class HookServer: @unchecked Sendable {
         var root = try Self.strictReadJSONObject(at: Self.copilotHooksURL,
                                                   label: "~/.copilot/hooks/coucou.json")
         if let raw = root["hooks"], !(raw is [String: Any]) {
-            throw NSError(domain: "Coucou", code: 2, userInfo: [
-                NSLocalizedDescriptionKey: "~/.copilot/hooks/coucou.json: \"hooks\" has an unexpected type — Coucou has not touched it."
+            throw NSError(domain: "NIBS Гермесик", code: 2, userInfo: [
+                NSLocalizedDescriptionKey: "~/.copilot/hooks/coucou.json: \"hooks\" has an unexpected type — NIBS Гермесик has not touched it."
             ])
         }
         let base = hookBase()
@@ -2236,8 +2236,8 @@ final class HookServer: @unchecked Sendable {
         var hooks = root["hooks"] as? [String: Any] ?? [:]
         for (event, timeout) in events {
             if let raw = hooks[event], !(raw is [[String: Any]]) {
-                throw NSError(domain: "Coucou", code: 2, userInfo: [
-                    NSLocalizedDescriptionKey: "~/.copilot/hooks/coucou.json: \"hooks\"[\"\(event)\"] has an unexpected type — Coucou has not touched it."
+                throw NSError(domain: "NIBS Гермесик", code: 2, userInfo: [
+                    NSLocalizedDescriptionKey: "~/.copilot/hooks/coucou.json: \"hooks\"[\"\(event)\"] has an unexpected type — NIBS Гермесик has not touched it."
                 ])
             }
             var entries = hooks[event] as? [[String: Any]] ?? []
@@ -2318,7 +2318,7 @@ final class HookServer: @unchecked Sendable {
         let url = Self.museSettingsURL
         let current = (try? Data(contentsOf: url)) ?? Data()
         guard sha256Hex(current) == fp else {
-            throw NSError(domain: "Coucou", code: 1, userInfo: [
+            throw NSError(domain: "NIBS Гермесик", code: 1, userInfo: [
                 NSLocalizedDescriptionKey: "~/.config/muse/settings.json changed since preview. Refresh and try again."
             ])
         }
@@ -2331,8 +2331,8 @@ final class HookServer: @unchecked Sendable {
         var settings = try Self.strictReadJSONObject(at: Self.museSettingsURL,
                                                       label: "~/.config/muse/settings.json")
         if let raw = settings["hooks"], !(raw is [String: Any]) {
-            throw NSError(domain: "Coucou", code: 2, userInfo: [
-                NSLocalizedDescriptionKey: "~/.config/muse/settings.json: \"hooks\" has an unexpected type — Coucou has not touched it."
+            throw NSError(domain: "NIBS Гермесик", code: 2, userInfo: [
+                NSLocalizedDescriptionKey: "~/.config/muse/settings.json: \"hooks\" has an unexpected type — NIBS Гермесик has not touched it."
             ])
         }
         let base = hookBase()
@@ -2350,8 +2350,8 @@ final class HookServer: @unchecked Sendable {
         var hooks = settings["hooks"] as? [String: Any] ?? [:]
         for (event, timeoutSec) in events {
             if let raw = hooks[event], !(raw is [[String: Any]]) {
-                throw NSError(domain: "Coucou", code: 2, userInfo: [
-                    NSLocalizedDescriptionKey: "~/.config/muse/settings.json: \"hooks\"[\"\(event)\"] has an unexpected type — Coucou has not touched it."
+                throw NSError(domain: "NIBS Гермесик", code: 2, userInfo: [
+                    NSLocalizedDescriptionKey: "~/.config/muse/settings.json: \"hooks\"[\"\(event)\"] has an unexpected type — NIBS Гермесик has not touched it."
                 ])
             }
             var groups = hooks[event] as? [[String: Any]] ?? []
@@ -2374,8 +2374,8 @@ final class HookServer: @unchecked Sendable {
         var settings = try Self.strictReadJSONObject(at: Self.museSettingsURL,
                                                       label: "~/.config/muse/settings.json")
         if let raw = settings["hooks"], !(raw is [String: Any]) {
-            throw NSError(domain: "Coucou", code: 2, userInfo: [
-                NSLocalizedDescriptionKey: "~/.config/muse/settings.json: \"hooks\" has an unexpected type — Coucou has not touched it."
+            throw NSError(domain: "NIBS Гермесик", code: 2, userInfo: [
+                NSLocalizedDescriptionKey: "~/.config/muse/settings.json: \"hooks\" has an unexpected type — NIBS Гермесик has not touched it."
             ])
         }
         if var hooks = settings["hooks"] as? [String: Any] {
@@ -2492,7 +2492,7 @@ export const CoucouPlugin = async (_ctx) => ({
         let url = Self.openCodePluginURL
         let current = (try? Data(contentsOf: url)) ?? Data()
         guard sha256Hex(current) == fp else {
-            throw NSError(domain: "Coucou", code: 1, userInfo: [
+            throw NSError(domain: "NIBS Гермесик", code: 1, userInfo: [
                 NSLocalizedDescriptionKey: "~/.config/opencode/plugins/coucou.js changed since preview. Refresh and try again."
             ])
         }
@@ -2519,9 +2519,9 @@ export const CoucouPlugin = async (_ctx) => ({
         let url = Self.openCodePluginURL
         guard FileManager.default.fileExists(atPath: url.path) else { return }
         let content = (try? String(contentsOf: url, encoding: .utf8)) ?? ""
-        guard content.contains("generated by Coucou") else {
-            throw NSError(domain: "Coucou", code: 3, userInfo: [
-                NSLocalizedDescriptionKey: "~/.config/opencode/plugins/coucou.js was not generated by Coucou — not deleting it."
+        guard content.contains("generated by NIBS Гермесик") else {
+            throw NSError(domain: "NIBS Гермесик", code: 3, userInfo: [
+                NSLocalizedDescriptionKey: "~/.config/opencode/plugins/coucou.js was not generated by NIBS Гермесик — not deleting it."
             ])
         }
         try FileManager.default.removeItem(at: url)
@@ -2600,7 +2600,7 @@ export default function (amp: any): void {
         let url = Self.ampPluginURL
         let current = (try? Data(contentsOf: url)) ?? Data()
         guard sha256Hex(current) == fp else {
-            throw NSError(domain: "Coucou", code: 1, userInfo: [
+            throw NSError(domain: "NIBS Гермесик", code: 1, userInfo: [
                 NSLocalizedDescriptionKey: "~/.config/amp/plugins/coucou.ts changed since preview. Refresh and try again."
             ])
         }
@@ -2627,9 +2627,9 @@ export default function (amp: any): void {
         let url = Self.ampPluginURL
         guard FileManager.default.fileExists(atPath: url.path) else { return }
         let content = (try? String(contentsOf: url, encoding: .utf8)) ?? ""
-        guard content.contains("generated by Coucou") else {
-            throw NSError(domain: "Coucou", code: 3, userInfo: [
-                NSLocalizedDescriptionKey: "~/.config/amp/plugins/coucou.ts was not generated by Coucou — not deleting it."
+        guard content.contains("generated by NIBS Гермесик") else {
+            throw NSError(domain: "NIBS Гермесик", code: 3, userInfo: [
+                NSLocalizedDescriptionKey: "~/.config/amp/plugins/coucou.ts was not generated by NIBS Гермесик — not deleting it."
             ])
         }
         try FileManager.default.removeItem(at: url)
@@ -3108,7 +3108,7 @@ description: Coucou notch integration — generated by Coucou.app
         let url = Self.hermesInitPyURL
         let current = (try? Data(contentsOf: url)) ?? Data()
         guard sha256Hex(current) == fp else {
-            throw NSError(domain: "Coucou", code: 1, userInfo: [
+            throw NSError(domain: "NIBS Гермесик", code: 1, userInfo: [
                 NSLocalizedDescriptionKey: "~/.hermes/plugins/coucou/__init__.py changed since preview. Refresh and try again."
             ])
         }
@@ -3137,9 +3137,9 @@ description: Coucou notch integration — generated by Coucou.app
         let url = Self.hermesInitPyURL
         guard FileManager.default.fileExists(atPath: url.path) else { return }
         let content = (try? String(contentsOf: url, encoding: .utf8)) ?? ""
-        guard content.contains("generated by Coucou") else {
-            throw NSError(domain: "Coucou", code: 3, userInfo: [
-                NSLocalizedDescriptionKey: "~/.hermes/plugins/coucou/__init__.py was not generated by Coucou — not deleting it."
+        guard content.contains("generated by NIBS Гермесик") else {
+            throw NSError(domain: "NIBS Гермесик", code: 3, userInfo: [
+                NSLocalizedDescriptionKey: "~/.hermes/plugins/coucou/__init__.py was not generated by NIBS Гермесик — not deleting it."
             ])
         }
         // Remove from hermes plugins.enabled first, then delete the files.
@@ -3181,7 +3181,7 @@ description: Coucou notch integration — generated by Coucou.app
         let effectiveApprovals = enableApprovals && supportsTransport
         guard let merged = Self.mergedHermesConfig(base, enableApprovals: effectiveApprovals) else {
             _pendingHermesConfigContent = nil
-            throw NSError(domain: "Coucou", code: 4, userInfo: [
+            throw NSError(domain: "NIBS Гермесик", code: 4, userInfo: [
                 NSLocalizedDescriptionKey: "~/.hermes/config.yaml uses an unsupported structure (flow maps, YAML anchors, or multi-document). Edit it manually and add:\n  security:\n    approval:\n      transport: coucou\n      transport_fallback: builtin"
             ])
         }
@@ -3195,7 +3195,7 @@ description: Coucou notch integration — generated by Coucou.app
         let url = Self.hermesConfigURL
         let current = (try? Data(contentsOf: url)) ?? Data()
         guard sha256Hex(current) == fp else {
-            throw NSError(domain: "Coucou", code: 1, userInfo: [
+            throw NSError(domain: "NIBS Гермесик", code: 1, userInfo: [
                 NSLocalizedDescriptionKey: "~/.hermes/config.yaml changed since preview. Refresh and try again."
             ])
         }
@@ -3236,7 +3236,7 @@ extension Notification.Name {
 
 private let nbHookShellWrapper = """
 #!/bin/sh
-# Coucou hook relay — always exits 0, never blocks Claude Code
+# NIBS Гермесик hook relay — always exits 0, never blocks Claude Code
 HOOK_DIR="$(dirname "$0")"
 out=""
 if xcode-select -p >/dev/null 2>&1; then
@@ -3272,8 +3272,8 @@ exit 0
 
 private let nbHookPythonGitHub = """
 #!/usr/bin/env python3
-# nb-hook.py — Coucou hook relay for Claude Code and third-party agents (GitHub version)
-# Reads JSON from stdin, forwards to Coucou via Unix socket, translates response.
+# nb-hook.py — NIBS Гермесик hook relay for Claude Code and third-party agents (GitHub version)
+# Reads JSON from stdin, forwards to NIBS Гермесик via Unix socket, translates response.
 import sys, json, os, socket
 
 def normalize_event(name):
@@ -3377,7 +3377,7 @@ def main():
             return
 
     socket_path = os.path.expanduser(
-        '~/Library/Application Support/NotchBuddy/nb.sock'
+        '~/Library/Application Support/NIBSGermesik/nb.sock'
     )
 
     # --statusline mode: relay rate_limits to Coucou, then delegate to saved previous
@@ -3565,7 +3565,7 @@ def main():
                     if agent in ('copilot', 'muse'):
                         out = {'permissionDecision': 'deny'}
                     else:
-                        out = {'hookSpecificOutput': {'hookEventName': 'PermissionRequest', 'decision': {'behavior': 'deny', 'message': 'Denied from Coucou'}}}
+                        out = {'hookSpecificOutput': {'hookEventName': 'PermissionRequest', 'decision': {'behavior': 'deny', 'message': 'Denied from NIBS Гермесик'}}}
                     sys.stdout.write(json.dumps(out) + '\\n')
                     sys.stdout.flush()
                     sys.exit(0)
@@ -3606,7 +3606,7 @@ def main():
         pass  # Always exit cleanly — never block the agent
 
     # Antigravity needs a decision on PreToolUse ({} reads as a denial). "ask" keeps its own
-    # permission prompt (and the user's Always Allow); Coucou never allows a tool by itself.
+    # permission prompt (and the user's Always Allow); NIBS Гермесик never allows a tool by itself.
     if agent == 'antigravity' and event == 'PreToolUse':
         sys.stdout.write('{"decision":"ask"}\\n')
         sys.stdout.flush()
@@ -3625,7 +3625,7 @@ sys.exit(0)
 
 private let nbHookPythonAppStore = """
 #!/usr/bin/env python3
-# nb-hook.py — Coucou (App Store) hook relay for Claude Code and third-party agents
+# nb-hook.py — NIBS Гермесик (App Store) hook relay for Claude Code and third-party agents
 # Socket lives inside the sandboxed container; script runs outside the sandbox.
 import sys, json, os, socket
 
@@ -3917,7 +3917,7 @@ def main():
                     if agent in ('copilot', 'muse'):
                         out = {'permissionDecision': 'deny'}
                     else:
-                        out = {'hookSpecificOutput': {'hookEventName': 'PermissionRequest', 'decision': {'behavior': 'deny', 'message': 'Denied from Coucou'}}}
+                        out = {'hookSpecificOutput': {'hookEventName': 'PermissionRequest', 'decision': {'behavior': 'deny', 'message': 'Denied from NIBS Гермесик'}}}
                     sys.stdout.write(json.dumps(out) + '\\n')
                     sys.stdout.flush()
                     sys.exit(0)
@@ -3957,7 +3957,7 @@ def main():
         pass  # Always exit cleanly — never block the agent
 
     # Antigravity needs a decision on PreToolUse ({} reads as a denial). "ask" keeps its own
-    # permission prompt (and the user's Always Allow); Coucou never allows a tool by itself.
+    # permission prompt (and the user's Always Allow); NIBS Гермесик never allows a tool by itself.
     if agent == 'antigravity' and event == 'PreToolUse':
         sys.stdout.write('{"decision":"ask"}\\n')
         sys.stdout.flush()

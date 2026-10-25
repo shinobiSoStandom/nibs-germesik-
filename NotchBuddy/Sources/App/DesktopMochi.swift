@@ -94,7 +94,7 @@ struct DesktopBotView: View {
 
 // MARK: - Desktop Mochi controller
 
-/// Manages the "Mochi on the desktop" floating panel.
+/// Manages the "Гермесик on the desktop" floating panel.
 ///
 /// Life cycle:
 /// - **Install from drag**: `IslandWindowController.finishDrag` calls `install(ghostPanel:at:)`.

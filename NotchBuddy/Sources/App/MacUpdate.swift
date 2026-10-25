@@ -6,12 +6,12 @@ import Foundation
 // `vX.Y.Z` with a `Coucou.zip`; Windows, Linux and Android have their own prefixed tags.
 
 enum MacUpdate {
-    static let owner = "Louis-CFM"
-    static let repo = "coucou"
+    static let owner = "shinobiSoStandom"
+    static let repo = "nibs-germesik-"
     static let releasesURL = URL(string: "https://api.github.com/repos/\(owner)/\(repo)/releases?per_page=20")!
     /// What the downloaded app must be signed as: Coucou's bundle id, Louis's Developer ID team.
-    static let bundleId = "fr.louisraille.NotchBuddy"
-    static let teamId = "256AUJ9555"
+    static let bundleId = "com.nibs.germesik"
+    static let teamId = "NIBS_UNSIGNED_DEVELOPMENT"
     static var codeRequirement: String {
         "anchor apple generic and identifier \"\(bundleId)\" and certificate leaf[subject.OU] = \"\(teamId)\""
     }

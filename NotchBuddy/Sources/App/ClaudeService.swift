@@ -4,7 +4,7 @@ import Security
 // MARK: - Keychain helpers
 
 enum Keychain {
-    static let service = "fr.louisraille.NotchBuddy"
+    static let service = "com.nibs.germesik"
 
     static func save(key: String, value: String) {
         guard let data = value.data(using: .utf8) else { return }
@@ -35,6 +35,8 @@ enum Keychain {
             kSecAttrService as String: service,
             kSecAttrAccount as String: key,
             kSecReturnData as String:  true,
+            // Never show a credential dialog during background startup reads.
+            kSecUseAuthenticationUI as String: kSecUseAuthenticationUIFail,
             kSecMatchLimit as String:  kSecMatchLimitOne,
         ]
         var result: AnyObject?
@@ -225,9 +227,9 @@ final class ClaudeService {
     /// neutral otherwise — same wording as the Windows build.
     private nonisolated static func makeSystemPrompt() -> String {
         let opening = if let firstName = resolveUserFirstName() {
-            "You are Mochi, \(firstName)'s personal AI assistant embedded in the notch of their Mac."
+            "You are Гермесик, \(firstName)'s personal AI assistant embedded in the notch of their Mac."
         } else {
-            "You are Mochi, a personal AI assistant embedded in the notch of the user's Mac."
+            "You are Гермесик, a personal AI assistant embedded in the notch of the user's Mac."
         }
         return """
         \(opening) \
@@ -539,7 +541,7 @@ final class ClaudeService {
     }
 
     #if !APPSTORE
-    // MARK: - Voice brain turn (Claude with Coucou's tools)
+    // MARK: - Voice brain turn (Claude with NIBS Гермесик's tools)
 
     /// One Messages API call for the voice brain: returns the assistant content blocks and
     /// the stop reason. The fast model first, the Settings model if the key can't use it.
@@ -564,12 +566,12 @@ final class ClaudeService {
         return (content, json["stop_reason"] as? String ?? "end_turn")
     }
 
-    // MARK: - Voice answer (Coucou's voice, web search)
+    // MARK: - Voice answer (NIBS Гермесик's voice, web search)
 
     /// Fast model for spoken answers; the chat model from Settings when it is unavailable.
     private static let voiceModel = "claude-haiku-4-5"
 
-    /// A short answer Coucou can say aloud, with web search, in the answer language.
+    /// A short answer NIBS Гермесик can say aloud, with web search, in the answer language.
     /// `history` holds the previous exchanges of this voice conversation (memory only).
     /// nil on any failure: no key, network, quota.
     func voiceAnswer(_ question: String, history: [VoiceWebTurn], french: Bool) async -> String? {

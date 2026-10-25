@@ -78,7 +78,7 @@ enum VoiceSettings {
     }
 
     /// Claude is Coucou's brain (the user's Anthropic API key): what I say after
-    /// "OK Coucou" goes to Claude, which acts with Coucou's tools and searches the web.
+    /// "OK NIBS Гермесик" goes to Claude, which acts with Coucou's tools and searches the web.
     /// Off by default: my words leave the Mac only once this is turned on.
     static var claudeBrainEnabled: Bool {
         get { UserDefaults.standard.bool(forKey: "voiceClaudeBrain") }

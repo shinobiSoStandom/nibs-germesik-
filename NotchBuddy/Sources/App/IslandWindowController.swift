@@ -28,7 +28,7 @@ final class IslandWindowController: NSWindowController {
     /// True only while Coucou listens for the answer to a question it asked.
     private var isInConversation = false
     /// Context (last action, on-device model session) is kept a little after a turn so
-    /// "OK Coucou, et Stripe aussi" still works; this resets it.
+    /// "OK NIBS Гермесик, et Stripe aussi" still works; this resets it.
     private var voiceContextExpiry: DispatchWorkItem?
     private var conversationContext = ConversationContext()
     private var consecutiveFailures = 0
@@ -346,7 +346,7 @@ final class IslandWindowController: NSWindowController {
                 self?.voiceContextExpiry?.cancel()
                 if !isDirect {
                     VoiceActionRunner.shared.pendingQuestion = nil
-                    // The island stays compact now: the tick says "I heard OK Coucou".
+                    // The island stays compact now: the tick says "I heard OK NIBS Гермесик".
                     if AppState.shared.soundEnabled { SoundEngine.shared.play("tick") }
                 }
                 self?.fsm.voiceWoke()
@@ -1720,7 +1720,7 @@ extension IslandWindowController {
                 closeVoiceTurn()
                 return
             }
-            // First miss right after "OK Coucou": ask once, like a person would
+            // First miss right after "OK NIBS Гермесик": ask once, like a person would
             // ("Pardon, tu peux répéter ?"), then listen for the repeat.
             let again = VoiceActionResult(
                 outcome: .success,
@@ -1954,7 +1954,7 @@ extension IslandWindowController {
     }
 
     /// Stop listening and let the island settle. The context (last action, model session)
-    /// stays 90 s so a new "OK Coucou, et Stripe aussi" still understands "aussi".
+    /// stays 90 s so a new "OK NIBS Гермесик, et Stripe aussi" still understands "aussi".
     @MainActor
     private func closeVoiceTurn() {
         isInConversation = false

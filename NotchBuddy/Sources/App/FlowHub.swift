@@ -85,8 +85,8 @@ enum HubTheme {
     static let body = Color(hex: "#E1E3E6")
     static let secondary = Color(hex: "#8E939C")
     static let muted = Color(hex: "#6B7079")
-    static let accent = Color(hex: "#FB923C")
-    static let onAccent = Color(hex: "#170C04")
+    static let accent = Color(hex: "#ED257C")
+    static let onAccent = Color.white
     static let green = Color(hex: "#34D399")
     static let red = Color(hex: "#FF453A")
     /// One color per person in a call: you first, then the others.
@@ -177,7 +177,7 @@ final class FlowHubController {
         let win = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 1100, height: 720),
                            styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
                            backing: .buffered, defer: false)
-        win.title = "Coucou"
+        win.title = "NIBS Гермесик"
         win.titlebarAppearsTransparent = true
         win.titleVisibility = .hidden
         win.appearance = NSAppearance(named: .darkAqua)
@@ -258,7 +258,7 @@ private struct HubSidebar: View {
                 // hops and hats): lifted so his body lines up with the name.
                 HubLiveMochi(size: 28)
                     .offset(y: -4)
-                Text(verbatim: "Coucou")
+                Text(verbatim: "NIBS Гермесик")
                     .font(.system(size: 18, weight: .bold))
             }
             .padding(.horizontal, 8)

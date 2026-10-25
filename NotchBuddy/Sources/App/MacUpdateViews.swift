@@ -1,7 +1,7 @@
 #if !APPSTORE
 import SwiftUI
 
-// MARK: - Notch card: "Coucou 0.6.0 is out", one click to install it
+// MARK: - Notch card: "NIBS Гермесик 0.6.0 is out", one click to install it
 
 struct UpdateCardView: View {
     @ObservedObject private var updater = MacUpdater.shared
@@ -113,42 +113,13 @@ struct UpdateCardView: View {
 // MARK: - Settings → General → Updates
 
 struct UpdateSettingsSection: View {
-    @ObservedObject private var updater = MacUpdater.shared
-    @State private var enabled = MacUpdater.consent == true
-
     var body: some View {
-        GroupBox(String(localized: "update.settings.title")) {
+        GroupBox("NIBS Гермесик · \(MacUpdater.currentVersion)") {
             VStack(alignment: .leading, spacing: 10) {
-                Toggle(String(localized: "update.settings.toggle"), isOn: $enabled)
-                    .onChange(of: enabled) { _, on in updater.setEnabled(on) }
-                Text(String(localized: "update.settings.footer"))
-                    .font(.system(size: 11))
-                    .foregroundColor(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                HStack(spacing: 10) {
-                    if let r = updater.latest {
-                        Button(String(format: String(localized: "update.settings.install %@"), r.version)) { updater.show(r) }
-                    }
-                    Button(String(localized: "update.settings.check")) {
-                        Task { await updater.check(manual: true) }
-                    }
-                    .disabled(updater.lastCheck == .checking || updater.busy)
-                    status
-                }
-                Text(String(format: String(localized: "update.you-have %@"), MacUpdater.currentVersion))
-                    .font(.system(size: 11))
-                    .foregroundColor(.secondary)
-            }
-            .padding(6)
-        }
-    }
-
-    @ViewBuilder private var status: some View {
-        switch updater.lastCheck {
-        case .checking: ProgressView().controlSize(.small)
-        case .upToDate: Text(String(localized: "update.up-to-date")).font(.system(size: 11)).foregroundColor(.secondary)
-        case .unreachable: Text(String(localized: "update.settings.unreachable")).font(.system(size: 11)).foregroundColor(.secondary)
-        case .none: EmptyView()
+                Text("Локальная сборка. Автоматические обновления пока недоступны.")
+                    .font(.system(size: 11)).foregroundColor(.secondary)
+                Link("Исходники и версии NIBS", destination: URL(string: "https://github.com/shinobiSoStandom/nibs-germesik-")!)
+            }.padding(6)
         }
     }
 }

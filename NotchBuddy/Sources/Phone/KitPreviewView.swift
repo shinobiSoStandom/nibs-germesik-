@@ -16,12 +16,12 @@ struct KitPreviewView: View {
 
     private let sampleDiff = DiffEngine.fromEdit(
         old: "func greet() {\n    print(\"Hello\")\n}\n",
-        new: "func greet(name: String) {\n    print(\"Coucou \\(name)\")\n}\n",
+        new: "func greet(name: String) {\n    print(\"NIBS Гермесик \\(name)\")\n}\n",
         path: "/coucou/Greeting.swift")
 
     var body: some View {
         List {
-            Section("Mochi — fixed poses") {
+            Section("Гермесик — fixed poses") {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 72))], spacing: 12) {
                     ForEach(Array(poses.enumerated()), id: \.offset) { index, pose in
                         VStack(spacing: 4) {

@@ -3,7 +3,7 @@ import Foundation
 
 // MARK: - ClaudeVoiceBrain
 //
-// "OK Coucou, …" handled by Claude (the user's Anthropic key, Settings → Voice), not by
+// "OK NIBS Гермесик, …" handled by Claude (the user's Anthropic key, Settings → Voice), not by
 // the phrase parser or the on-device model: Claude understands any wording, keeps the
 // thread of the conversation and calls Coucou's tools to act.
 //
@@ -28,7 +28,7 @@ final class ClaudeVoiceBrain {
     }
 
     private var messages: [[String: Any]] = []
-    /// One turn at a time: a second "OK Coucou" during the wait must not interleave.
+    /// One turn at a time: a second "OK NIBS Гермесик" during the wait must not interleave.
     private var busy = false
 
     func reset() { messages = [] }

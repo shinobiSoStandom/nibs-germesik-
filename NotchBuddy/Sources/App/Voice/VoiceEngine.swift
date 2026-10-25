@@ -593,7 +593,7 @@ final class VoiceEngine: ObservableObject {
         isListeningForCommand = true
         commandTranscript     = ""
         lastWordCount         = 0
-        // After "OK Coucou", leave time to start the sentence (the island no longer
+        // After "OK NIBS Гермесик", leave time to start the sentence (the island no longer
         // opens, the caption shows "Je t'écoute…" instead). 3 s was too short.
         directInitialTimeout  = Self.wakeFirstWordTimeout
         audio?.bypassVAD      = true
@@ -614,7 +614,7 @@ final class VoiceEngine: ObservableObject {
             // Logged once per turn (no words): helps when an answer seems unheard.
             if !loggedDropWhileSpeaking {
                 loggedDropWhileSpeaking = true
-                appendAppLog("nb.log", "[Voice] words heard while Coucou was speaking: ignored")
+                appendAppLog("nb.log", "[Voice] words heard while NIBS Гермесик was speaking: ignored")
             }
             return
         }
